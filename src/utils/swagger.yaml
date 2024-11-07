@@ -1,0 +1,1539 @@
+openapi: 3.0.0
+info:
+  title: Alias Game API
+  description: API documentation for the Alias Game project
+  version: 1.0.0
+servers:
+  - url: http://localhost:3001/api
+paths:
+  /users/createUser:
+    post:
+      summary: Create User
+      description: Create a User
+      tags:
+        - User
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                username:
+                  type: string
+                password:
+                  type: string
+              description:  Mandatory field for register a User
+              example:
+                username: Some User
+                password: some password
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                  user:
+                    type: object
+                  username:
+                    type: string
+                  gamesPlayed:
+                    type: number
+                  gamesWon:
+                    type: number
+                  _id:
+                    type: string
+                  __v: 
+                    type: number
+                example:
+                  message: User registered
+                  user: 
+                    username: Some User
+                    gamesPlayed: 0
+                    gamesWon: 0
+                    _id: 6705917a8d51ae7a83f93534,
+                    __v: 0
+        '401':
+          description: The fields must have a value ! (OR) The fileds must be a string ! (OR) User already exists
+
+  /users/getSpecificUser:
+    get:
+      summary: Get a specific User
+      description:  Search a specific User
+      tags: 
+        - User
+      security: [ { bearerAuth: [] } ]
+      parameters: 
+        - in: query
+          name: user_id
+          required: true
+          schema: 
+          type: string
+          format: ObjectId
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  _id:
+                    type: string
+                  username:
+                    type: string
+                  gamesPlayed:
+                    type: number
+                  gamesWon:
+                    type: number
+                  role:
+                    type: string
+                example:
+                    _id: 67057d70891f4df747d548fd
+                    username: Some User,
+                    gamesPlayed: 0
+                    gamesWon: 0
+                    role: player
+        '401':
+          description: Authorization header missing
+        '403':
+          description: Invalid token (OR) Access denied, administrator role required
+        '404':
+          description: User not found !
+
+  /users/getAllUsers:
+    get:  
+      ummary: Get All Users
+      description:  Get All Users
+      tags: 
+        - User
+      security: [ { bearerAuth: [] } ]
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  _id:
+                    type: string
+                  username:
+                    type: string
+                  password:
+                    type: string
+                  gamesPlayed:
+                    type: number
+                  gamesWon:
+                    type: number
+                  role:
+                    type: string
+                  __v:
+                    type: number
+                example:
+                    _id: 67057d70891f4df747d548fd
+                    username: Some User,
+                    password: $2a$10$1DJIMBvo0L2gxsRfK9kxTOUPfjDFkf
+                    gamesPlayed: 0
+                    gamesWon: 0
+                    role: admin
+                    "__v": 0
+        '401':
+          description: Authorization header missing
+        '403':
+          description: Invalid token (OR) Access denied, administrator role required
+
+  /users/updateUserField:
+    patch:
+      summary: Update User field
+      description: Update specific User field
+      tags: 
+        - User
+      security: [ { bearerAuth: [] } ]
+      parameters: 
+        - in: query
+          name: user_id
+          required: true
+          schema: 
+          type: string
+          format: ObjectId
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                gamesPlayed:
+                  type: number
+              description:  Mandatory field for create a Team
+              example:
+                gamesPlayed: 0
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  _id:
+                    type: string
+                  username:
+                    type: string
+                  gamesPlayed:
+                    type: number
+                  gamesWon:
+                    type: number
+                  role:
+                    type: string
+                example:
+                    _id: 67057d70891f4df747d548fd
+                    username: Some User,
+                    gamesPlayed: 2
+                    gamesWon: 0
+                    role: admin
+        '401':
+          description: Authorization header missing (OR) The gamesPlayed field must have a value ! (OR) The gamesPlayed field must be a number !
+        '403':
+          description: Invalid token (OR) Access denied, administrator role required    
+        '404':
+          description: User not found !   
+
+  /users/deleteUser:
+    delete:
+      summary: Delete User
+      description: Delete User
+      tags: 
+        - User
+      security: [ { bearerAuth: [] } ]
+      parameters: 
+        - in: query
+          name: user_id
+          required: true
+          schema: 
+          type: string
+          format: ObjectId
+      responses:
+        '200':
+          description: User deleted with sucess !
+        '401':
+          description: Authorization header missing
+        '403':
+          description: Invalid token (OR) Access denied, administrator role required
+        '404':
+          description: User not found !
+
+  /auth/login: 
+    post:
+      summary: User login
+      description: Login a User
+      tags:
+        - Auth
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                username:
+                  type: string
+                password:
+                  type: string
+              description:  Mandatory field for login a User
+              example:
+                username: Same username
+                password: Same password
+      responses:
+        '200':
+          description: Successfully logged in
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    description: Logged in
+                  token:
+                    type: string
+                    description: JWT token
+                example:
+                  message: Logged in 
+                  token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY3MDU5MTdhOGQ1MWFlN2E4M
+                  id: 6705917a8d51ae7a83f93534,
+        '400':
+          description: Invalid credentials
+        "401":
+          description: The fields must have a value ! (OR) The fileds must be a string !
+
+  /auth/createAdmin:
+    post:
+      summary: Create User Admin
+      description: Create a User Admin
+      tags:
+        - Auth
+      security: [ { bearerAuth: [] } ]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                username:
+                  type: string
+                password:
+                  type: string
+              description:  Mandatory field for Create a User Admin
+              example:
+                username: Same username
+                password: Same password
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                  _id:
+                    type: string
+                  username:
+                    type: string
+                  gamesPlayed:
+                    type: number
+                  gamesWon:
+                    type: number
+                  role:
+                    type: string
+                  adminToken:
+                    type: string
+                example:
+                    message: Admin created successfully
+                    _id: 670aa89113ff2eb70673148c
+                    username: Some User
+                    gamesPlayed: 0
+                    gamesWon: 0
+                    role: admin,
+                    adminToken: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY3MGFhODkxMTNmZjJlYjcwNjczMTQ4YyIsInVzZXJuYW1lIj
+        '401':
+          description: Authorization header missing (OR) The fields must have a value ! (OR) The fileds must be a string ! (OR) User already exists
+        '403':
+          description: Invalid token
+
+  /chats:
+    get:
+      summary: List all chats
+      tags:
+        - Chats
+      responses:
+        '200':
+          description: A list of chats
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Chat'
+        '500':
+          description: Internal server error
+
+    post:
+      summary: Create a new chat
+      tags:
+        - Chats
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                gameId:
+                  type: string
+                  example: "670ae1e48a25eea8a5b7335c"
+                teamId:
+                  type: string
+                  example: "670ae1e38a25eea8a5b73358"
+                message:
+                  type: string
+                  example: "description of the current word or guess"
+                messageType:
+                  type: string
+                  example: "description or guess"
+      responses:
+        '201':
+          description: Chat created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Chat'
+        '401':
+          description: Unauthorized
+        '500':
+          description: Internal server error
+
+  /chats/{chatId}:
+    get:
+      summary: Get a chat by ID
+      tags:
+        - Chats
+      parameters:
+        - name: chatId
+          in: path
+          required: true
+          description: ID of the chat to retrieve
+          schema:
+            type: string
+      responses:
+        '200':
+          description: A single chat
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Chat'
+        '404':
+          description: Chat not found
+        '500':
+          description: Internal server error
+
+    put:
+      summary: Update a chat by ID
+      tags:
+        - Chats
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: chatId
+          in: path
+          required: true
+          description: ID of the chat to update
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateChat'
+      responses:
+        '200':
+          description: Chat updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Chat'
+        '401':
+          description: Unauthorized
+        '404':
+          description: Chat not found
+        '500':
+          description: Internal server error
+
+    delete:
+      summary: Delete a chat by ID
+      tags:
+        - Chats
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: chatId
+          in: path
+          required: true
+          description: ID of the chat to delete
+          schema:
+            type: string
+      responses:
+        '204':
+          description: Chat deleted successfully
+        '401':
+          description: Unauthorized
+        '404':
+          description: Chat not found
+        '500':
+          description: Internal server error
+
+  /chats/message:
+    post:
+      summary: Receive a message guess
+      tags:
+        - Chats
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MessageGuess'
+      responses:
+        '200':
+          description: Message received successfully
+        '500':
+          description: Internal server error
+
+  /games:
+    get:
+      tags:
+        - Game
+      summary: Get all games
+      description: "Retrieve all games, regardless of their status."
+      responses:
+        '200':
+          description: "Games successfully retrieved"
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    _id:
+                      type: string
+                    teams:
+                      type: array
+                      items:
+                        type: string
+                    status:
+                      type: string
+                    currentTurnTeam:
+                      type: string
+                    currentDescriber:
+                      type: string
+                    currentWord:
+                      type: string
+                    createdAt:
+                      type: string
+                      format: date-time
+              example:
+                - _id: "670ae1e48a25eea8a5b7335c"
+                  teams:
+                    - "670ae1e38a25eea8a5b73358"
+                    - "670ae1e38a25eea8a5b7335a"
+                  status: "waiting"
+                  currentTurnTeam: "670ae1e38a25eea8a5b73358"
+                  currentDescriber: "670ae0318a25eea8a5b73354"
+                  currentWord: "ability"
+                  createdAt: "2024-10-12T20:53:56.037Z"
+                - _id: "670ae4798a25eea8a5b73367"
+                  teams:
+                    - "670ae4798a25eea8a5b73363"
+                    - "670ae4798a25eea8a5b73365"
+                  status: "waiting"
+                  currentTurnTeam: "670ae4798a25eea8a5b73363"
+                  currentDescriber: "670ae0318a25eea8a5b73360"
+                  currentWord: "clock"
+                  createdAt: "2024-10-12T21:04:57.728Z"
+        '401':
+          description: "Unauthorized - missing or invalid JWT"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+              example:
+                message: "Authorization header missing."
+        '403':
+          description: "Forbidden - administrator role required"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+              example:
+                message: "Access denied, administrator role required"
+        '500':
+          description: "Internal server error - failed to retrieve games"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+              example:
+                error: "Failed to retrieve games"
+      security: [ { bearerAuth: [] } ]
+
+  /games/{gameId}:
+    get:
+      tags:
+        - Game
+      summary: Get game by ID
+      description: "Returns the information of the game with the provided game ID."
+      parameters:
+        - in: path
+          name: gameId
+          required: true
+          schema:
+            type: string
+          description: "ID of the game to retrieve"
+      responses:
+        '200':
+          description: "Game successfully retrieved"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  describerIndices:
+                    type: object
+                    properties:
+                      team1:
+                        type: integer
+                      team2:
+                        type: integer
+                  _id:
+                    type: string
+                  teams:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        _id:
+                          type: string
+                        teamName:
+                          type: string
+                        players:
+                          type: array
+                          items:
+                            type: object
+                            properties:
+                              _id:
+                                type: string
+                              username:
+                                type: string
+                        score:
+                          type: integer
+                        createdAt:
+                          type: string
+                          format: date-time
+                        updatedAt:
+                          type: string
+                          format: date-time
+                        __v:
+                          type: integer
+                  rounds:
+                    type: integer
+                  currentRound:
+                    type: integer
+                  status:
+                    type: string
+                  currentTurnTeam:
+                    type: string
+                  currentDescriber:
+                    type: string
+                  currentWord:
+                    type: string
+                  createdAt:
+                    type: string
+                    format: date-time
+                  updatedAt:
+                    type: string
+                    format: date-time
+                  __v:
+                    type: integer
+              example:
+                describerIndices:
+                  team1: 0
+                  team2: 0
+                _id: "670ae1e48a25eea8a5b7335c"
+                teams:
+                  - _id: "670ae1e38a25eea8a5b73358"
+                    teamName: "Team 1"
+                    players:
+                      - _id: "670ae0318a25eea8a5b73354"
+                        username: "player"
+                    score: 0
+                    createdAt: "2024-10-12T20:53:55.535Z"
+                    updatedAt: "2024-10-12T20:53:55.535Z"
+                    __v: 0
+                  - _id: "670ae1e38a25eea8a5b7335a"
+                    teamName: "Team 2"
+                    players: []
+                    score: 0
+                    createdAt: "2024-10-12T20:53:55.562Z"
+                    updatedAt: "2024-10-12T20:53:55.562Z"
+                    __v: 0
+                rounds: 3
+                currentRound: 0
+                status: "waiting"
+                currentTurnTeam: "670ae1e38a25eea8a5b73358"
+                currentDescriber: "670ae0318a25eea8a5b73354"
+                currentWord: "ability"
+                createdAt: "2024-10-12T20:53:56.037Z"
+                updatedAt: "2024-10-12T20:53:56.037Z"
+                __v: 0
+        '401':
+          description: "Unauthorized - missing or invalid JWT"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+              example:
+                message: "Authorization header missing."
+        '403':
+          description: "Forbidden - administrator role required"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+              example:
+                message: "Access denied, administrator role required"
+        '404':
+          description: "Not found - game not found"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+              example:
+                message: "Game not found"
+        '500':
+          description: "Server error - failed to fetch game"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+              example:
+                message: "Error fetching game"
+      security:
+        - bearerAuth: []  
+      
+    delete:
+      tags:
+        - Game
+      summary: Delete game by ID
+      description: "Deletes the game specified by the game ID in the parameters."
+      parameters:
+        - in: path
+          name: gameId
+          required: true
+          schema:
+            type: string
+          description: "ID of the game to delete"
+      responses:
+        '200':
+          description: "Game successfully deleted"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+              example:
+                message: "Game Deleted with success!"
+        '401':
+          description: "Unauthorized - missing or invalid JWT"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+              example:
+                message: "Authorization header missing."
+        '403':
+          description: "Forbidden - administrator role required"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+              example:
+                message: "Access denied, administrator role required"
+        '404':
+          description: "Not found - game not found"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+              example:
+                message: "Game not found"
+        '500':
+          description: "Internal server error - failed to delete game"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+              example:
+                error: "Failed to delete game"
+      security:
+        - bearerAuth: []          
+
+  /games/create:
+    post:
+      tags:
+        - Game
+      summary: Create a new game
+      description: Creates a new game. A first player is needed to create it, this player who joins will be set as the current Describer.
+      operationId: createGame
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - firstPlayerId
+              properties:
+                firstPlayerId:
+                  type: string
+                  description: ID of the first player who will be the current describer
+              example:
+                firstPlayerId: "670ae0318a25eea8a5b73354"
+      responses:
+        '201':
+          description: Game created successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "New game created"
+                  gameId:
+                    type: string
+                    example: "670ae4798a25eea8a5b73367"
+                  game:
+                    type: object
+                    properties:
+                      teams:
+                        type: array
+                        items:
+                          type: string
+                          example: "670ae4798a25eea8a5b73363"
+                          type: string
+                          example: "670ae4798a25eea8a5b73365"
+                      rounds:
+                        type: integer
+                        example: 3
+                      currentRound:
+                        type: integer
+                        example: 0
+                      status:
+                        type: string
+                        example: "waiting"
+                      currentTurnTeam:
+                        type: string
+                        example: "670ae4798a25eea8a5b73363"
+                      currentDescriber:
+                        type: string
+                        example: "670ae0318a25eea8a5b73354"
+                      describerIndices:
+                        type: object
+                        properties:
+                          team1:
+                            type: integer
+                            example: 0
+                          team2:
+                            type: integer
+                            example: 0
+                      currentWord:
+                        type: string
+                        example: "clock"
+                      _id:
+                        type: string
+                        example: "670ae4798a25eea8a5b73367"
+                      createdAt:
+                        type: string
+                        format: date-time
+                        example: "2024-10-12T21:04:57.728Z"
+                      updatedAt:
+                        type: string
+                        format: date-time
+                        example: "2024-10-12T21:04:57.728Z"
+                      __v:
+                        type: integer
+                        example: 0
+        '400':
+          description: "Bad request - firstPlayerId is required"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+              example:
+                message: "firstPlayerId is required to create a game"
+        '403':
+          description: "Forbidden - administrator role required"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+              example:
+                message: "Access denied, administrator role required"
+        '500':
+          description: "Server error - failed to create game"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+              example:
+                message: "Failed to create game"
+      security:
+        - bearerAuth: []
+
+  /games/{gameId}/endTurn:
+    post:
+      tags:
+        - Game
+      summary: "Switch team turns and update the describer"
+      description: "Switches the turns of the teams, updates the current describer to be a player from the next team, and changes the current word. When both teams have completed their turn, the round advances. After playing all 3 rounds, the game status is updated to 'finished'."
+      operationId: "endTurn"
+      security:
+        - bearerAuth: [ { bearerAuth: [] } ]
+      parameters:
+        - in: path
+          name: gameId
+          required: true
+          schema:
+            type: string
+          description: "ID of the game"
+      responses:
+        '200':
+          description: "Turn ended, next team's turn and describer updated"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                  game:
+                    type: object
+                    properties:
+                      describerIndices:
+                        type: object
+                        properties:
+                          team1:
+                            type: integer
+                          team2:
+                            type: integer
+                      _id:
+                        type: string
+                      teams:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            _id:
+                              type: string
+                            teamName:
+                              type: string
+                            players:
+                              type: array
+                              items:
+                                type: string
+                            score:
+                              type: integer
+                      rounds:
+                        type: integer
+                      currentRound:
+                        type: integer
+                      status:
+                        type: string
+                      currentTurnTeam:
+                        type: string
+                      currentDescriber:
+                        type: string
+                      currentWord:
+                        type: string
+                example:
+                  message: "Turn ended, next team's turn and describer updated"
+                  game:
+                    describerIndices:
+                      team1: 0
+                      team2: 1
+                    _id: "670c0a521c899135ec56190a"
+                    teams:
+                      - _id: "670c0a521c899135ec561906"
+                        teamName: "Team 1"
+                        players:
+                          - "670c0a511c899135ec5618f6"
+                          - "670c0a511c899135ec5618f8"
+                          - "670c0a511c899135ec5618fa"
+                          - "670c0a511c899135ec5618fc"
+                        score: 2
+                      - _id: "670c0a521c899135ec561908"
+                        teamName: "Team 2"
+                        players:
+                          - "670c0a511c899135ec5618fe"
+                          - "670c0a511c899135ec561900"
+                          - "670c0a511c899135ec561902"
+                          - "670c0a521c899135ec561904"
+                        score: 0
+                    rounds: 3
+                    currentRound: 0
+                    status: "in progress"
+                    currentTurnTeam: "670c0a521c899135ec561908"
+                    currentDescriber: "670c0a511c899135ec561900"
+                    currentWord: "jump"
+        '200 - Tie':
+          description: "The game ended in a tie."
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                  game:
+                    type: object
+                    properties:
+                      isTie:
+                        type: boolean
+                      message:
+                        type: string
+                example:
+                  message: "The game ended in a tie."
+                  game:
+                    isTie: true
+                    message: "It's a tie!"
+        '200 - Winner':
+          description: "Game completed, we have a winner!"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                  winner:
+                    type: object
+                    properties:
+                      _id:
+                        type: string
+                      teamName:
+                        type: string
+                      players:
+                        type: array
+                        items:
+                          type: string
+                      score:
+                        type: integer
+                      createdAt:
+                        type: string
+                        format: date-time
+                      updatedAt:
+                        type: string
+                        format: date-time
+                example:
+                  message: "Game completed, we have a winner!"
+                  winner:
+                    _id: "670c2eaa6ee5723ee49aab01"
+                    teamName: "Team 1"
+                    players:
+                      - "670c2eaa6ee5723ee49aaaf1"
+                      - "670c2eaa6ee5723ee49aaaf3"
+                      - "670c2eaa6ee5723ee49aaaf5"
+                      - "670c2eaa6ee5723ee49aaaf7"
+                    score: 4
+                    createdAt: "2024-10-13T20:33:46.870Z"
+                    updatedAt: "2024-10-13T20:33:46.870Z"
+        '401':
+          description: "Unauthorized"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+              example:
+                message: "Authorization header missing."
+        '403':
+          description: "Forbidden"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+              example:
+                message: "Access denied, administrator role required"
+        '500':
+          description: "Internal Server Error"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                  error:
+                    type: string
+              example:
+                message: "Error ending turn"
+                error: "Failed to switch turn"
+
+  /games/join:
+    post:
+      tags:
+        - Game
+      summary: "Join a waiting game or create a new one"
+      description: "This endpoint allows a player to join a game in 'waiting' status that doesn't have full teams. If there are no waiting games, a new game is created, and the player is assigned as the current describer. It also checks that the player is not already in another game that is 'in progress' or 'waiting'."
+      operationId: "joinGame"
+      security:
+        - bearerAuth: [ { bearerAuth: [] } ]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                userId:
+                  type: string
+              required:
+                - userId
+            example:
+              userId: "670c3285188f055b4475fae9"
+      responses:
+        '201':
+          description: "Player successfully joined or a new game was created"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                  gameId:
+                    type: string
+                  teamId:
+                    type: string
+              example:
+                message: "You're the first player to join. A new game has been created."
+                gameId: "670c36a2188f055b4475fb21"
+                teamId: "670c36a2188f055b4475fb1d"
+        '401':
+          description: "Unauthorized"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+              example:
+                message: "Authorization header missing."
+        '400':
+          description: "Bad request"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                  gameId:
+                    type: string
+                  teamId:
+                    type: string
+              example:
+                message: "Player is already in a team in this game"
+                gameId: "670c36a2188f055b4475fb21"
+                teamId: "670c36a2188f055b4475fb1d"
+        '500':
+          description: "Internal Server Error"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+              example:
+                error: "Failed to join game"
+
+  /teams/:
+    post:
+      summary: Create Team
+      description: Create a Team
+      tags:
+        - Team
+      security: [ { bearerAuth: [] } ]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                teamName:
+                  type: string
+              description:  Mandatory field for create a Team
+              example:
+                teamName: Team Name
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  teamName:
+                    type: string
+                  players:
+                    type: [string]
+                  score:
+                    type: number
+                  _id:
+                    type: string
+                  createdAt:
+                    type: string
+                  updatedAt: 
+                    type: string
+                  __v:
+                    type: number
+                example:
+                    teamName: Team Name,
+                    players: [ 67057edd891f4df747d54904 ]
+                    score: 0,
+                    _id: 67057d70891f4df747d548fd
+                    createdAt: 2024-10-08T18:50:05.575Z,
+                    updatedAt: 2024-10-08T18:50:05.575Z,
+                    __v: 0
+        '401':
+          description: Authorization header missing (OR) TeamName field must have a value ! (OR) The teamName field must be a string ! (OR) User already have a team !
+        '403':
+          description: Invalid token
+
+  /teams/searchTeam:
+    get:
+      summary: Get a specific team
+      description:  Search a specific team
+      tags: 
+        - Team
+      security: [ { bearerAuth: [] } ]
+      parameters: 
+        - in: query
+          name: team_id
+          required: true
+          schema: 
+          type: string
+          format: ObjectId
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  _id:
+                    type: string
+                  teamName:
+                    type: string
+                  players:
+                    type: [string]
+                  score:
+                    type: number
+                  createdAt:
+                    type: string
+                  updatedAt: 
+                    type: string
+                  __v:
+                    type: number
+                example:
+                    _id: 67057d70891f4df747d548fd
+                    teamName: Team Name,
+                    players: [ 67057edd891f4df747d54904 ]
+                    score: 0
+                    createdAt: 2024-10-08T18:50:05.575Z
+                    updatedAt: 2024-10-08T18:50:05.575Z
+                    __v: 0
+        '401':
+          description: Authorization header missing
+        '403':
+          description: Invalid token 
+        '404':
+          description: Team Not Found !
+
+  /teams/getAllTeams:
+    get:
+      summary: Get all teams
+      description:  Get all teams
+      tags: 
+        - Team
+      security: [ { bearerAuth: [] } ]
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  _id:
+                    type: string
+                  teamName:
+                    type: string
+                  players:
+                    type: [string]
+                  score:
+                    type: number
+                  createdAt:
+                    type: string
+                  updatedAt: 
+                    type: string
+                  __v:
+                    type: number
+                example: 
+                    _id: 670569e031b1d7699ba0ff24
+                    teamName: Team Name
+                    players: [ 67057edd891f4df747d54904 ]
+                    score: 0
+                    createdAt: 2024-10-08T18:50:05.575Z
+                    updatedAt: 2024-10-08T18:50:05.575Z
+                    __v: 0
+        '401':
+          description: Authorization header missing
+        '403':
+          description: Invalid token 
+
+  /teams/updateSpecificTeamField:
+    patch:
+      summary: Update team field
+      description: Update specific team field
+      tags: 
+        - Team
+      security: [ { bearerAuth: [] } ]
+      parameters: 
+        - in: query
+          name: team_id
+          required: true
+          schema: 
+          type: string
+          format: ObjectId
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                teamName:
+                  type: string
+              description:  Mandatory field for create a Team
+              example:
+                teamName: Team Name
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  _id:
+                    type: string
+                  teamName:
+                    type: string
+                  players:
+                    type: [string]
+                  score:
+                    type: number
+                  createdAt:
+                    type: string
+                  updatedAt: 
+                    type: string
+                  __v:
+                    type: number
+                example:
+                    _id: 67057d70891f4df747d548fd
+                    teamName: Team Name,
+                    players: [ 67057edd891f4df747d54904 ]
+                    score: 0
+                    createdAt: 2024-10-08T18:50:05.575Z
+                    updatedAt: 2024-10-08T18:50:05.575Z
+                    __v: 0
+        '401':
+          description: Authorization header missing (OR) TeamName field must have a value ! (OR) The teamName field must be a string !
+        '403':
+          description: Invalid token
+        '404':
+          description: Team Not Found !
+
+  /teams/deleteTeam:
+    delete:
+      summary: Delete team
+      description: Delete team
+      tags: 
+        - Team
+      security: [ { bearerAuth: [] } ]
+      parameters: 
+        - in: query
+          name: team_id
+          required: true
+          schema: 
+          type: string
+          format: ObjectId
+      responses:
+        '200':
+          description: Team Deleted with sucess !
+        '401':
+          description: Authorization header missing
+        '403':
+          description: Invalid token
+        '404':
+          description: Team Not Found ! 
+      
+
+components:
+  schemas:
+    Chat:
+      type: object
+      properties:
+        gameId:
+          type: string
+          description: The unique identifier of the game (MongoDB ObjectId).
+        teamId:
+          type: string
+          description: The unique identifier of the team (MongoDB ObjectId).
+        userId:
+          type: string
+          description: The unique identifier of the user (MongoDB ObjectId).
+        message:
+          type: string
+          description: The content of the chat message.
+        messageType:
+          type: string
+          enum: 
+            - description
+            - guess
+            - chat
+          description: The type of message (description, guess, chat).
+        createdAt:
+          type: string
+          format: date-time
+          description: The date and time when the message was created.
+        updatedAt:
+          type: string
+          format: date-time
+          description: The date and time when the message was last updated.
+      required:
+        - gameId
+        - teamId
+        - userId
+        - message
+        - messageType
+    Game:
+      type: object
+      properties:
+        teams:
+          type: array
+          items:
+            type: string
+            description: List of team IDs
+        rounds:
+          type: integer
+          description: Number of rounds in the game
+        currentRound:
+          type: integer
+          default: 1
+          description: Current round of the game
+        status:
+          type: string
+          enum: [waiting, in progress, finished]
+          description: Status of the game
+        currentTurnTeam:
+          type: string
+          description: ID of the team currently playing
+        currentDescriber:
+          type: string
+          description: ID of the user currently describing
+        describerIndices:
+          type: object
+          properties:
+            team1:
+              type: integer
+              description: Describer index for team 1
+            team2:
+              type: integer
+              description: Describer index for team 2
+        currentWord:
+          type: string
+          description: The word being guessed
+    Team:
+      type: object
+      properties:
+        teamName:
+          type: string
+          description: The name of the team
+        players:
+          type: array
+          items:
+            type: string
+            description: List of player IDs
+        score:
+          type: integer
+          description: The team's score
+    User:
+      type: object
+      properties:
+        username:
+          type: string
+          description: The username of the player
+        password:
+          type: string
+          description: The password of the player
+        gamesPlayed:
+          type: integer
+          description: Number of games played by the user
+        gamesWon:
+          type: integer
+          description: Number of games won by the user
+        currentGame:
+          type: string
+          description: The current game the user is playing
+        team:
+          type: string
+          description: The team the user is a part of
+        role:
+          type: string
+          enum: [player, admin]
+          description: The role of the user (player or admin)
+
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerAuth: JWT
+

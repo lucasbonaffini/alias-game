@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport"
+    content="width=device-width, initial-scale=1.0">
+  <title>Create Users</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+
+<body class="bg-gray-100 font-sans">
+  <div class="container mx-auto p-6">
+    <div class="flex items-center space-x-4 mb-6">
+      <a href="/login.html"
+        class="flex items-center bg-gray-500 text-white px-2 py-2 rounded-md hover:bg-gray-600 transition duration-200">
+
+        <svg xmlns="http://www.w3.org/2000/svg"
+          class="h-5 w-5 ml-1"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke="currentColor">
+          <path stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            d="M15 12H3m0 0l6-6m-6 6l6 6" />
+        </svg>
+      </a>
+      <h1 class="text-3xl font-bold">Create Users</h1>
+    </div>
+
+    <div class="grid grid-cols-4 gap-6"
+      id="user-cards">
+      <!-- User cards will be generated here -->
+    </div>
+
+    <div class="mt-6 text-center">
+      <button id="create-button"
+        class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">
+        Create
+      </button>
+    </div>
+
+    <div id="loading"
+      class="mt-4 text-center text-blue-500 hidden">
+      <svg class="animate-spin h-8 w-8 mx-auto text-blue-600"
+        xmlns="http://www.w3.org/2000/svg"
+        fill="none"
+        viewBox="0 0 24 24">
+        <circle class="opacity-25"
+          cx="12"
+          cy="12"
+          r="10"
+          stroke="currentColor"
+          stroke-width="4"></circle>
+        <path class="opacity-75"
+          fill="currentColor"
+          d="M4 12a8 8 0 018-8v8H4z"></path>
+      </svg>
+      Loading...
+    </div>
+  </div>
+
+  <script>
+    const userCardsContainer = document.getElementById('user-cards');
+
+    for (let x = 1; x <= 2; x++) {
+      for (let y = 1; y <= 4; y++) {
+        const card = document.createElement('div');
+        card.className = 'bg-white p-4 rounded shadow text-center h-[80px]';
+        card.innerHTML = `<strong>Name:</strong> userT${x}_${y} <br> <strong>Password:</strong> 123`;
+        if (x === 2 && y === 4) {
+          card.className = 'p-4 rounded shadow text-center bg-red-200 bg-opacity-50';
+          card.innerHTML += '<br/><i class="text-sm">Not joined in the game yet</i>';
+        }
+        userCardsContainer.appendChild(card);
+      }
+    }
+  </script>
+  <script src="/scripts/create.js"></script>
+</body>
+
+</html>

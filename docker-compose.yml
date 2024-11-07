@@ -1,0 +1,27 @@
+
+services:
+  mongo:
+    image: mongo:6.0
+    container_name: mongo
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo-data:/data/db
+
+  api:
+    build: .
+    container_name: alias-backend
+    restart: always
+    ports:
+      - "3001:3001"
+    depends_on:
+      - mongo
+    environment:
+      - MONGO_URI=${MONGO_URI}
+      - NODE_ENV=${NODE_ENV}
+    volumes:
+      - .:/app
+      - /app/node_modules
+    entrypoint: sh -c "npm install && if [ \"$NODE_ENV\" = 'development' ]; then npm run dev; else npm start; fi"
+volumes:
+  mongo-data:

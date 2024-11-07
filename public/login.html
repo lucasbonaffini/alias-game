@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport"
+    content="width=device-width, initial-scale=1.0">
+  <title>Login</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+
+<body class="flex items-center justify-center min-h-screen bg-gray-100">
+  <div class="bg-white p-8 rounded-lg shadow-md w-96">
+    <h1 class="text-2xl font-bold mb-6 text-center">Login</h1>
+    <form id="loginForm">
+      <div class="mb-4">
+        <label for="username"
+          class="block text-sm font-medium text-gray-700">Username</label>
+        <input type="text"
+          id="username"
+          name="username"
+          required
+          class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring focus:ring-blue-500 focus:border-blue-500" />
+      </div>
+      <div class="mb-6">
+        <label for="password"
+          class="block text-sm font-medium text-gray-700">Password</label>
+        <input type="password"
+          id="password"
+          name="password"
+          required
+          class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring focus:ring-blue-500 focus:border-blue-500" />
+      </div>
+      <button type="submit"
+        class="w-full bg-blue-500 text-white py-2 rounded-md hover:bg-blue-600 transition duration-200">Login</button>
+    </form>
+    <p class="mt-4 text-center text-sm text-gray-600">
+      Don't have an account? <a href="/register.html"
+        class="text-blue-500 hover:underline">Sign up</a>
+    </p>
+
+    <div class="mt-6 text-center">
+      <a href="/create.html"
+        class="text-sm text-gray-500 hover:text-blue-500 transition duration-200">
+        Create users for testing
+      </a>
+    </div>
+  </div>
+
+  <script src="/scripts/login.js"></script>
+</body>
+
+</html>
